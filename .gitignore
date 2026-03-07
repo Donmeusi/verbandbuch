@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# app data (SQLite DB + uploaded files – do not commit)
+/data/*.db
+/data/documents/

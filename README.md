@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🩹 Verbandbuch – Digitale Erste-Hilfe-Dokumentation
 
-## Getting Started
+Eine moderne Web-App zur digitalen Erfassung von Bagatellunfällen gemäß DGUV Vorschrift 1 §24. Entwickelt mit **Next.js 14**, **SQLite** und einem dunklen Glassmorphism-Design.
 
-First, run the development server:
+---
+
+## ✨ Features
+
+### Öffentlicher Bereich
+- 📋 Unfallmeldung erfassen (öffentlich zugänglich, ohne Login)
+- 🔗 Automatisch generierter, persönlicher Bearbeitungslink nach dem Absenden
+- ✏️ Meldung bearbeiten oder löschen über den persönlichen Link
+- 🏥 Warnung bei Arztbesuch + automatische Download-Links für Pflichtformulare (BG-Formulare)
+- 🆓 Freitext-Eingabe bei „Sonstiges" (Verletzungsart & Körperteil)
+
+### Admin-Bereich (`/admin`)
+- 🔐 Sicherer Login mit bcrypt-gehashten Passwörtern und HTTP-only Session-Cookie
+- 📊 Dashboard mit allen Meldungen (Suche, Bearbeiten, Löschen, CSV-Export)
+- 📈 **Statistiken** mit Diagrammen und Filtern (Jahr, Monat, Datumsbereich, Abteilung, Verletzungsart)
+- 📂 **Dokumentenverwaltung** – Formulare als PDF/Word/Excel hochladen und verwalten
+- 👥 **Benutzerverwaltung** – Admin-Konten erstellen, umbenennen, Passwort ändern, löschen
+
+---
+
+## 🚀 Schnellstart
+
+### Voraussetzungen
+- Node.js 18+
+- npm
+
+### Installation
 
 ```bash
+git clone https://github.com/Donmeusi/verbandbuch.git
+cd verbandbuch
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Die App läuft anschließend unter **http://localhost:3000**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Standard-Zugangsdaten (Admin)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Benutzername | Passwort |
+|---|---|
+| `admin` | `admin123` |
 
-## Learn More
+> ⚠️ **Wichtig:** Das Standard-Passwort nach der ersten Anmeldung sofort ändern!
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🏗️ Projektstruktur
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+verbandbuch/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx              # Öffentliches Meldeformular
+│   │   ├── confirmation/         # Bestätigungsseite mit Bearbeitungslink
+│   │   ├── edit/[token]/         # Persönliche Bearbeitungsseite
+│   │   ├── admin/
+│   │   │   ├── page.tsx          # Admin-Dashboard (Meldungen)
+│   │   │   ├── stats/            # Statistiken
+│   │   │   ├── documents/        # Dokumentenverwaltung
+│   │   │   ├── users/            # Benutzerverwaltung
+│   │   │   └── login/            # Admin-Login
+│   │   └── api/
+│   │       ├── reports/          # CRUD für Meldungen
+│   │       ├── documents/        # Upload & Download von Formularen
+│   │       └── admin/            # Auth, Statistiken, Admin-CRUD
+│   └── lib/
+│       ├── db.ts                 # SQLite-Datenbankfunktionen
+│       └── session.ts            # iron-session Konfiguration
+├── data/
+│   ├── verbandbuch.db            # SQLite-Datenbank (auto-erstellt)
+│   └── documents/                # Hochgeladene Formulare
+└── public/
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ Technologie-Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Bereich | Technologie |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Datenbank | SQLite via `better-sqlite3` |
+| Session | `iron-session` (HTTP-only Cookie) |
+| Passwörter | `bcryptjs` |
+| Diagramme | `chart.js` |
+| IDs/Token | `uuid` |
+| Styling | Vanilla CSS (Glassmorphism Dark Theme) |
+| Schrift | Inter (Google Fonts) |
+
+---
+
+## 🔒 Sicherheit
+
+- Passwörter werden mit **bcrypt** gehasht (cost factor 10)
+- Sessions über **HTTP-only, Secure Cookies** (iron-session)
+- **Pfad-Traversal-Schutz** beim Datei-Download (`path.basename` + Resolving)
+- **MIME-Typ & Dateiendungs-Whitelist** beim Upload
+- **Dateigrößenlimit** von 10 MB beim Upload
+- **Serverseitige Eingabevalidierung** für alle öffentlichen Formulare
+- **`X-Content-Type-Options: nosniff`** auf Datei-Downloads
+- Letzter Administrator kann nicht gelöscht werden (Lockout-Schutz)
+
+---
+
+## 📝 Lizenz
+
+MIT License – siehe [LICENSE](LICENSE)
