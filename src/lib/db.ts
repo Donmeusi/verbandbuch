@@ -48,6 +48,10 @@ export function initDb() {
       size INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL DEFAULT ''
+    );
   `);
 
     // Insert default admin if not exists
@@ -57,6 +61,14 @@ export function initDb() {
         const bcrypt = require("bcryptjs");
         const hash = bcrypt.hashSync("admin123", 10);
         db.prepare("INSERT INTO admins (username, password_hash) VALUES (?, ?)").run("admin", hash);
+    }
+
+    // Seed default Arztbesuch description if not set
+    const existingSetting = db.prepare("SELECT key FROM settings WHERE key = 'arztbesuch_beschreibung'").get();
+    if (!existingSetting) {
+        db.prepare("INSERT INTO settings (key, value) VALUES ('arztbesuch_beschreibung', ?)").run(
+            "Bei einem Arztbesuch muss eine Unfallanzeige bei der Berufsgenossenschaft eingereicht werden (Frist: 3 Werktage). Nach dem Absenden dieser Meldung erhalten Sie Download-Links für die erforderlichen Formulare."
+        );
     }
 
     db.close();
@@ -341,6 +353,23 @@ export function deleteDocument(id: number): Document | null {
     db.prepare("DELETE FROM documents WHERE id = ?").run(id);
     db.close();
     return doc;
+}
+
+// ─── Settings ────────────────────────────────────────────────────────────────
+
+export function getSetting(key: string): string | null {
+    const db = getDb();
+    initDb();
+    const row = db.prepare("SELECT value FROM settings WHERE key = ?").get(key) as { value: string } | undefined;
+    db.close();
+    return row?.value ?? null;
+}
+
+export function updateSetting(key: string, value: string): void {
+    const db = getDb();
+    initDb();
+    db.prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").run(key, value);
+    db.close();
 }
 
 

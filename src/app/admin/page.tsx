@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Report } from "@/lib/db";
 
 const ABTEILUNGEN = ["Produktion", "Lager", "Verwaltung", "Technik", "Versand", "Qualitätssicherung", "Küche/Kantine", "Reinigung", "Sonstiges"];
-const VERLETZUNGSARTEN = ["Schnittwunde", "Schürfwunde", "Prellung", "Stauchung", "Verbrühung/Verbrennung", "Fremdkörper im Auge", "Quetschung", "Zerrung", "Sonstiges"];
+const VERLETZUNGSARTEN = ["Schnittwunde", "Schürfwunde", "Prellung", "Stauchung", "Verbrühung/Verbrennung", "Fremdkörper im Auge", "Quetschung", "Zerrung", "Gefahrstoffunfall", "Verätzung", "Augenverletzung", "Elektrischer Schlag", "Insektenstich/-biss", "Hitzschlag/Sonnenstich", "Inhalation von Dämpfen/Gasen", "Knochenbruch", "Sonstiges"];
 const KOERPERTEILE = ["Finger", "Hand", "Handgelenk", "Arm", "Schulter", "Kopf", "Gesicht", "Auge", "Fuß", "Zeh", "Knie", "Bein", "Rücken", "Sonstiges"];
 
 export default function AdminDashboard() {
@@ -95,6 +95,7 @@ export default function AdminDashboard() {
                         <Link href="/admin/stats" className="nav-link">Statistiken</Link>
                         <Link href="/admin/documents" className="nav-link">Dokumente</Link>
                         <Link href="/admin/users" className="nav-link">Benutzer</Link>
+                        <Link href="/admin/settings" className="nav-link">Einstellungen</Link>
                         <button onClick={handleLogout} className="btn btn-secondary btn-sm">Abmelden</button>
                     </div>
                 </div>

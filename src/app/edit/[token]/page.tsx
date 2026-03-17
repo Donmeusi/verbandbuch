@@ -13,7 +13,7 @@ function fileIcon(mime: string) {
 }
 
 const ABTEILUNGEN = ["Produktion", "Lager", "Verwaltung", "Technik", "Versand", "Qualitätssicherung", "Küche/Kantine", "Reinigung", "Sonstiges"];
-const VERLETZUNGSARTEN = ["Schnittwunde", "Schürfwunde", "Prellung", "Stauchung", "Verbrühung/Verbrennung", "Fremdkörper im Auge", "Quetschung", "Zerrung", "Sonstiges"];
+const VERLETZUNGSARTEN = ["Schnittwunde", "Schürfwunde", "Prellung", "Stauchung", "Verbrühung/Verbrennung", "Fremdkörper im Auge", "Quetschung", "Zerrung", "Gefahrstoffunfall", "Verätzung", "Augenverletzung", "Elektrischer Schlag", "Insektenstich/-biss", "Hitzschlag/Sonnenstich", "Inhalation von Dämpfen/Gasen", "Knochenbruch", "Sonstiges"];
 const KOERPERTEILE = ["Finger", "Hand", "Handgelenk", "Arm", "Schulter", "Kopf", "Gesicht", "Auge", "Fuß", "Zeh", "Knie", "Bein", "Rücken", "Sonstiges"];
 
 interface Params { token: string; }

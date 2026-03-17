@@ -47,6 +47,11 @@ export default function AdminDocumentsPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+    // Arztbesuch-Beschreibung
+    const [arztText, setArztText] = useState("");
+    const [arztTextSaving, setArztTextSaving] = useState(false);
+    const [arztTextLoaded, setArztTextLoaded] = useState(false);
+
     const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
     const fetchDocs = useCallback(async () => {
@@ -57,6 +62,27 @@ export default function AdminDocumentsPage() {
     }, [router]);
 
     useEffect(() => { fetchDocs(); }, [fetchDocs]);
+
+    // Load arztbesuch description
+    useEffect(() => {
+        fetch("/api/admin/settings")
+            .then(r => r.json())
+            .then(d => { setArztText(d.arztbesuch_beschreibung ?? ""); setArztTextLoaded(true); })
+            .catch(() => setArztTextLoaded(true));
+    }, []);
+
+    const handleSaveArztText = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setArztTextSaving(true);
+        const res = await fetch("/api/admin/settings", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ arztbesuch_beschreibung: arztText }),
+        });
+        setArztTextSaving(false);
+        const data = await res.json();
+        if (data.success) showToast("✅ Hinweistext gespeichert!");
+    };
 
     const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();

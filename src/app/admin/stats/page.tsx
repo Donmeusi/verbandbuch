@@ -147,7 +147,16 @@ export default function AdminStatsPage() {
                     labels: data.byKoerperteil.map(k => k.koerperteil),
                     datasets: [{ label: "Verletzungen", data: data.byKoerperteil.map(k => k.count), backgroundColor: COLORS.slice(2), borderRadius: 6 }],
                 },
-                options: { ...defaultOpts, indexAxis: "y" as const } as never,
+                options: {
+                    indexAxis: "y" as const,
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: { ticks: { color: tickColor, stepSize: 1 }, grid: { color: gridColor }, beginAtZero: true },
+                        y: { ticks: { color: tickColor }, grid: { color: gridColor } },
+                    },
+                    plugins: { legend: { display: false } },
+                } as never,
             });
         }
 
@@ -173,6 +182,7 @@ export default function AdminStatsPage() {
                         <Link href="/admin/stats" className="nav-link active">Statistiken</Link>
                         <Link href="/admin/documents" className="nav-link">Dokumente</Link>
                         <Link href="/admin/users" className="nav-link">Benutzer</Link>
+                        <Link href="/admin/settings" className="nav-link">Einstellungen</Link>
                         <button onClick={handleLogout} className="btn btn-secondary btn-sm">Abmelden</button>
                     </div>
                 </div>

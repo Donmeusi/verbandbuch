@@ -1,16 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const ABTEILUNGEN = ["Produktion", "Lager", "Verwaltung", "Technik", "Versand", "Qualitätssicherung", "Küche/Kantine", "Reinigung", "Sonstiges"];
-const VERLETZUNGSARTEN = ["Schnittwunde", "Schürfwunde", "Prellung", "Stauchung", "Verbrühung/Verbrennung", "Fremdkörper im Auge", "Quetschung", "Zerrung", "Sonstiges"];
+const VERLETZUNGSARTEN = ["Schnittwunde", "Schürfwunde", "Prellung", "Stauchung", "Verbrühung/Verbrennung", "Fremdkörper im Auge", "Quetschung", "Zerrung", "Gefahrstoffunfall", "Verätzung", "Augenverletzung", "Elektrischer Schlag", "Insektenstich/-biss", "Hitzschlag/Sonnenstich", "Inhalation von Dämpfen/Gasen", "Knochenbruch", "Sonstiges"];
 const KOERPERTEILE = ["Finger", "Hand", "Handgelenk", "Arm", "Schulter", "Kopf", "Gesicht", "Auge", "Fuß", "Zeh", "Knie", "Bein", "Rücken", "Sonstiges"];
 
 export default function HomePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [arztText, setArztText] = useState("Bei einem Arztbesuch muss eine Unfallanzeige bei der Berufsgenossenschaft eingereicht werden (Frist: 3 Werktage). Nach dem Absenden dieser Meldung erhalten Sie Download-Links für die erforderlichen Formulare.");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((d) => { if (d.arztbesuch_beschreibung) setArztText(d.arztbesuch_beschreibung); })
+      .catch(() => { /* Fallback bleibt */ });
+  }, []);
   const [form, setForm] = useState({
     datum: new Date().toISOString().split("T")[0],
     uhrzeit: new Date().toTimeString().slice(0, 5),
@@ -160,10 +168,7 @@ export default function HomePage() {
                   {form.arzt_aufgesucht && (
                     <div className="alert alert-warning" style={{ marginTop: "0.75rem" }}>
                       🏥 <strong>Wichtig: Arztbesuch erfordert eine offizielle Unfallmeldung!</strong><br />
-                      <span style={{ fontSize: "0.9em" }}>
-                        Bei einem Arztbesuch muss eine <strong>Unfallanzeige bei der Berufsgenossenschaft</strong> eingereicht werden.
-                        Nach dem Absenden dieser Meldung erhalten Sie Download-Links für die erforderlichen Formulare.
-                      </span>
+                      <span style={{ fontSize: "0.9em", whiteSpace: "pre-wrap" }}>{arztText}</span>
                     </div>
                   )}
                 </div>
