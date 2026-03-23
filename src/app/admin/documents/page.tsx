@@ -29,6 +29,7 @@ function fileIcon(mime: string) {
 
 export default function AdminDocumentsPage() {
     const router = useRouter();
+    const [menuOpen, setMenuOpen] = useState(false);
     const [docs, setDocs] = useState<Doc[]>([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
@@ -137,7 +138,7 @@ export default function AdminDocumentsPage() {
                 </div>
             )}
 
-            <nav className="navbar">
+            <nav className="navbar" style={{ position: "sticky", top: 0, zIndex: 100 }}>
                 <div className="container-wide navbar-inner">
                     <Link href="/" className="navbar-brand">
                         <div className="logo-icon">🩹</div>
@@ -150,10 +151,21 @@ export default function AdminDocumentsPage() {
                         <Link href="/admin/users" className="nav-link">Benutzer</Link>
                         <button onClick={handleLogout} className="btn btn-secondary btn-sm">Abmelden</button>
                     </div>
+                    <button className={`navbar-toggle${menuOpen ? " open" : ""}`} onClick={() => setMenuOpen(o => !o)} aria-label="Menü">
+                        <span className="navbar-toggle-icon" />
+                    </button>
+                </div>
+                <div className={`navbar-mobile${menuOpen ? " open" : ""}`}>
+                    <Link href="/admin" className="nav-link" onClick={() => setMenuOpen(false)}>📋 Meldungen</Link>
+                    <Link href="/admin/stats" className="nav-link" onClick={() => setMenuOpen(false)}>📊 Statistiken</Link>
+                    <Link href="/admin/documents" className="nav-link active" onClick={() => setMenuOpen(false)}>📄 Dokumente</Link>
+                    <Link href="/admin/users" className="nav-link" onClick={() => setMenuOpen(false)}>👤 Benutzer</Link>
+                    <Link href="/admin/settings" className="nav-link" onClick={() => setMenuOpen(false)}>⚙️ Einstellungen</Link>
+                    <button onClick={handleLogout} className="btn btn-secondary">Abmelden</button>
                 </div>
             </nav>
 
-            <main className="container" style={{ padding: "2rem 1.5rem" }}>
+            <main className="container admin-page-main" style={{ padding: "2rem 1.5rem" }}>
                 <div className="mb-3">
                     <h1 style={{ fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--text-primary)" }}>Dokumente</h1>
                     <p style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>Formulare und Vorlagen zum Download für Meldende anbieten</p>

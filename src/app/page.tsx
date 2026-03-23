@@ -9,6 +9,7 @@ const KOERPERTEILE = ["Finger", "Hand", "Handgelenk", "Arm", "Schulter", "Kopf",
 
 export default function HomePage() {
   const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [arztText, setArztText] = useState("Bei einem Arztbesuch muss eine Unfallanzeige bei der Berufsgenossenschaft eingereicht werden (Frist: 3 Werktage). Nach dem Absenden dieser Meldung erhalten Sie Download-Links für die erforderlichen Formulare.");
@@ -77,6 +78,12 @@ export default function HomePage() {
           <div className="navbar-links">
             <Link href="/admin/login" className="nav-link">Admin-Bereich</Link>
           </div>
+          <button className={`navbar-toggle${menuOpen ? " open" : ""}`} onClick={() => setMenuOpen(o => !o)} aria-label="Menü">
+            <span className="navbar-toggle-icon" />
+          </button>
+        </div>
+        <div className={`navbar-mobile${menuOpen ? " open" : ""}`}>
+          <Link href="/admin/login" className="nav-link" onClick={() => setMenuOpen(false)}>🔒 Admin-Bereich</Link>
         </div>
       </nav>
 

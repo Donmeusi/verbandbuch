@@ -12,6 +12,7 @@ type ModalMode = "create" | "editUsername" | "editPassword" | "delete" | null;
 
 export default function AdminUsersPage() {
     const router = useRouter();
+    const [menuOpen, setMenuOpen] = useState(false);
     const [users, setUsers] = useState<AdminUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [modal, setModal] = useState<ModalMode>(null);
@@ -121,7 +122,7 @@ export default function AdminUsersPage() {
             )}
 
             {/* Navbar */}
-            <nav className="navbar">
+            <nav className="navbar" style={{ position: "sticky", top: 0, zIndex: 100 }}>
                 <div className="container-wide navbar-inner">
                     <Link href="/" className="navbar-brand">
                         <div className="logo-icon">🩹</div>
@@ -134,10 +135,21 @@ export default function AdminUsersPage() {
                         <Link href="/admin/users" className="nav-link active">Benutzerverwaltung</Link>
                         <button onClick={handleLogout} className="btn btn-secondary btn-sm">Abmelden</button>
                     </div>
+                    <button className={`navbar-toggle${menuOpen ? " open" : ""}`} onClick={() => setMenuOpen(o => !o)} aria-label="Menü">
+                        <span className="navbar-toggle-icon" />
+                    </button>
+                </div>
+                <div className={`navbar-mobile${menuOpen ? " open" : ""}`}>
+                    <Link href="/admin" className="nav-link" onClick={() => setMenuOpen(false)}>📋 Meldungen</Link>
+                    <Link href="/admin/stats" className="nav-link" onClick={() => setMenuOpen(false)}>📊 Statistiken</Link>
+                    <Link href="/admin/documents" className="nav-link" onClick={() => setMenuOpen(false)}>📄 Dokumente</Link>
+                    <Link href="/admin/users" className="nav-link active" onClick={() => setMenuOpen(false)}>👤 Benutzerverwaltung</Link>
+                    <Link href="/admin/settings" className="nav-link" onClick={() => setMenuOpen(false)}>⚙️ Einstellungen</Link>
+                    <button onClick={handleLogout} className="btn btn-secondary">Abmelden</button>
                 </div>
             </nav>
 
-            <main className="container" style={{ padding: "2rem 1.5rem" }}>
+            <main className="container admin-page-main" style={{ padding: "2rem 1.5rem" }}>
                 <div className="flex items-center justify-between mb-3" style={{ flexWrap: "wrap", gap: "1rem" }}>
                     <div>
                         <h1 style={{ fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--text-primary)" }}>Benutzerverwaltung</h1>
