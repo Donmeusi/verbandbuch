@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -9,8 +9,16 @@ export default function AdminSettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [toast, setToast] = useState("");
+    const [toastType, setToastType] = useState<"success" | "error">("success");
 
-    const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
+    // Backup / Restore state
+    const [restoring, setRestoring] = useState(false);
+    const [restoreFile, setRestoreFile] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const showToast = (msg: string, type: "success" | "error" = "success") => {
+        setToast(msg); setToastType(type); setTimeout(() => setToast(""), 4000);
+    };
 
     const handleLogout = async () => {
         await fetch("/api/admin/logout", { method: "POST" });
@@ -40,15 +48,47 @@ export default function AdminSettingsPage() {
         if (data.success) {
             showToast("✅ Einstellung gespeichert!");
         } else {
-            showToast("❌ Fehler beim Speichern.");
+            showToast("❌ Fehler beim Speichern.", "error");
         }
+    };
+
+    const handleBackup = () => {
+        const a = document.createElement("a");
+        a.href = "/api/admin/backup";
+        a.click();
+        showToast("✅ Backup-Download gestartet!");
+    };
+
+    const handleRestore = async () => {
+        if (!restoreFile) return;
+        setRestoring(true);
+        try {
+            const fileText = await restoreFile.text();
+            const json = JSON.parse(fileText);
+            const res = await fetch("/api/admin/restore", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(json),
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(`✅ Wiederhergestellt: ${data.restored} neu, ${data.skipped} bereits vorhanden.`);
+                setRestoreFile(null);
+                if (fileInputRef.current) fileInputRef.current.value = "";
+            } else {
+                showToast(`❌ Fehler: ${data.error}`, "error");
+            }
+        } catch {
+            showToast("❌ Ungültige Backup-Datei.", "error");
+        }
+        setRestoring(false);
     };
 
     return (
         <div>
             {toast && (
-                <div style={{ position: "fixed", top: "80px", right: "1.5rem", zIndex: 300, animation: "slideUp 0.2s ease" }}>
-                    <div className="alert alert-success">{toast}</div>
+                <div style={{ position: "fixed", top: "80px", right: "1.5rem", zIndex: 300, animation: "slideUp 0.2s ease", maxWidth: "420px" }}>
+                    <div className={`alert alert-${toastType === "error" ? "error" : "success"}`}>{toast}</div>
                 </div>
             )}
 
@@ -72,42 +112,110 @@ export default function AdminSettingsPage() {
             <main className="container-wide" style={{ padding: "2rem 1.5rem" }}>
                 <div className="mb-3">
                     <h1 style={{ fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--text-primary)" }}>Einstellungen</h1>
-                    <p style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>Texte und Hinweise der Anwendung anpassen</p>
+                    <p style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>Texte, Hinweise und Datensicherung verwalten</p>
                 </div>
 
                 {loading ? (
                     <div className="empty-state"><div className="spinner" style={{ width: 40, height: 40, margin: "0 auto 1rem" }}></div><p>Laden…</p></div>
                 ) : (
-                    <div className="card" style={{ maxWidth: "800px" }}>
-                        <div className="card-title">🏥 Hinweistext bei Arztbesuch</div>
-                        <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", marginBottom: "1rem" }}>
-                            Dieser Text erscheint im Meldeformular, wenn die Option <strong>„Ja, ein Arzt wurde aufgesucht bzw. ist erforderlich"</strong> aktiviert wird.
-                        </p>
-                        <div className="form-group" style={{ marginBottom: "1.25rem" }}>
-                            <label htmlFor="arztText">Hinweistext</label>
-                            <textarea
-                                id="arztText"
-                                value={text}
-                                onChange={(e) => setText(e.target.value)}
-                                rows={6}
-                                placeholder="Hinweistext für Arztbesuch eingeben…"
-                                style={{ resize: "vertical" }}
-                            />
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "800px" }}>
+
+                        {/* ── Arztbesuch Hinweis ─────────────────── */}
+                        <div className="card">
+                            <div className="card-title">🏥 Hinweistext bei Arztbesuch</div>
+                            <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", marginBottom: "1rem" }}>
+                                Dieser Text erscheint im Meldeformular, wenn die Option <strong>„Ja, ein Arzt wurde aufgesucht bzw. ist erforderlich"</strong> aktiviert wird.
+                            </p>
+                            <div className="form-group" style={{ marginBottom: "1.25rem" }}>
+                                <label htmlFor="arztText">Hinweistext</label>
+                                <textarea
+                                    id="arztText"
+                                    value={text}
+                                    onChange={(e) => setText(e.target.value)}
+                                    rows={6}
+                                    placeholder="Hinweistext für Arztbesuch eingeben…"
+                                    style={{ resize: "vertical" }}
+                                />
+                            </div>
+
+                            <div className="alert alert-warning mb-2" style={{ fontSize: "0.85rem" }}>
+                                <strong>Vorschau:</strong>
+                                <div style={{ marginTop: "0.4rem", whiteSpace: "pre-wrap" }}>{text || <em style={{ opacity: 0.5 }}>Kein Text eingegeben</em>}</div>
+                            </div>
+
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleSave}
+                                disabled={saving}
+                                style={{ marginTop: "0.5rem" }}
+                            >
+                                {saving ? <><span className="spinner"></span> Speichern…</> : "💾 Einstellung speichern"}
+                            </button>
                         </div>
 
-                        <div className="alert alert-warning mb-2" style={{ fontSize: "0.85rem" }}>
-                            <strong>Vorschau:</strong>
-                            <div style={{ marginTop: "0.4rem", whiteSpace: "pre-wrap" }}>{text || <em style={{ opacity: 0.5 }}>Kein Text eingegeben</em>}</div>
+                        {/* ── Datensicherung ─────────────────────── */}
+                        <div className="card">
+                            <div className="card-title">🗄️ Datensicherung & Wiederherstellung</div>
+
+                            {/* Export */}
+                            <div style={{ marginBottom: "2rem" }}>
+                                <h3 style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "0.4rem" }}>Backup erstellen</h3>
+                                <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", marginBottom: "1rem" }}>
+                                    Alle Unfallmeldungen und Einstellungen als JSON-Datei herunterladen. Die Datei kann zur Wiederherstellung verwendet werden.
+                                </p>
+                                <button className="btn btn-primary" onClick={handleBackup} id="btn-backup-download">
+                                    💾 Backup herunterladen
+                                </button>
+                            </div>
+
+                            <hr style={{ border: "none", borderTop: "1px solid var(--border)", marginBottom: "1.5rem" }} />
+
+                            {/* Import */}
+                            <div>
+                                <h3 style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "0.4rem" }}>Wiederherstellen</h3>
+                                <p style={{ color: "var(--text-muted)", fontSize: "0.875rem", marginBottom: "0.75rem" }}>
+                                    Backup-Datei auswählen und importieren. Bereits vorhandene Meldungen werden nicht überschrieben – nur fehlende Einträge werden ergänzt.
+                                </p>
+
+                                <div className="alert alert-warning mb-2" style={{ fontSize: "0.85rem" }}>
+                                    ⚠️ <strong>Hinweis:</strong> Nur Meldungen, die noch nicht in der Datenbank vorhanden sind, werden importiert. Einstellungen werden aktualisiert.
+                                </div>
+
+                                <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap", marginTop: "1rem" }}>
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept=".json"
+                                        id="restoreFile"
+                                        style={{
+                                            padding: "0.5rem",
+                                            border: "1px solid var(--border)",
+                                            borderRadius: "var(--radius-sm)",
+                                            background: "#fff",
+                                            fontSize: "0.875rem",
+                                            color: "var(--text-primary)",
+                                            flex: 1,
+                                            minWidth: "200px",
+                                        }}
+                                        onChange={(e) => setRestoreFile(e.target.files?.[0] ?? null)}
+                                    />
+                                    <button
+                                        id="btn-restore"
+                                        className="btn btn-secondary"
+                                        onClick={handleRestore}
+                                        disabled={!restoreFile || restoring}
+                                    >
+                                        {restoring ? <><span className="spinner"></span> Importieren…</> : "📤 Wiederherstellen"}
+                                    </button>
+                                </div>
+                                {restoreFile && (
+                                    <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "0.5rem" }}>
+                                        Ausgewählt: <strong>{restoreFile.name}</strong> ({(restoreFile.size / 1024).toFixed(1)} KB)
+                                    </p>
+                                )}
+                            </div>
                         </div>
 
-                        <button
-                            className="btn btn-primary"
-                            onClick={handleSave}
-                            disabled={saving}
-                            style={{ marginTop: "0.5rem" }}
-                        >
-                            {saving ? <><span className="spinner"></span> Speichern…</> : "💾 Einstellung speichern"}
-                        </button>
                     </div>
                 )}
             </main>

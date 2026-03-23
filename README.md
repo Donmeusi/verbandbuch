@@ -1,6 +1,7 @@
 # 🩹 Verbandbuch – Digitale Erste-Hilfe-Dokumentation
 
-Eine moderne Web-App zur digitalen Erfassung von Bagatellunfällen gemäß DGUV Vorschrift 1 §24. Entwickelt mit **Next.js 14**, **SQLite** und einem dunklen Glassmorphism-Design.
+Eine moderne Web-App zur digitalen Erfassung von Bagatellunfällen gemäß **DGUV Vorschrift 1 §24**.  
+Entwickelt mit **Next.js**, **SQLite** und dem **Corporate Design der Hochschule Anhalt**.
 
 ---
 
@@ -16,9 +17,11 @@ Eine moderne Web-App zur digitalen Erfassung von Bagatellunfällen gemäß DGUV 
 ### Admin-Bereich (`/admin`)
 - 🔐 Sicherer Login mit bcrypt-gehashten Passwörtern und HTTP-only Session-Cookie
 - 📊 Dashboard mit allen Meldungen (Suche, Bearbeiten, Löschen, CSV-Export)
-- 📈 **Statistiken** mit Diagrammen und Filtern (Jahr, Monat, Datumsbereich, Abteilung, Verletzungsart)
+- 📈 **Statistiken** mit interaktiven Diagrammen, Filtern und **PDF-Export im HS-Anhalt-Design**
 - 📂 **Dokumentenverwaltung** – Formulare als PDF/Word/Excel hochladen und verwalten
 - 👥 **Benutzerverwaltung** – Admin-Konten erstellen, umbenennen, Passwort ändern, löschen
+- ⚙️ **Einstellungen** – Hinweistexte anpassen
+- 💾 **Datensicherung & Wiederherstellung** – Backup als JSON exportieren und importieren
 
 ---
 
@@ -31,8 +34,8 @@ Eine moderne Web-App zur digitalen Erfassung von Bagatellunfällen gemäß DGUV 
 ### Installation
 
 ```bash
-git clone https://github.com/Donmeusi/verbandbuch.git
-cd verbandbuch
+git clone https://github.com/Donmeusi/verbandbuch_hs.git
+cd verbandbuch_hs
 npm install
 npm run dev
 ```
@@ -49,6 +52,28 @@ Die App läuft anschließend unter **http://localhost:3000**
 
 ---
 
+## 📄 PDF-Statistikbericht
+
+Der Admin-Bereich bietet unter **Statistiken** einen vollständigen PDF-Export:
+
+- Deckblatt mit HS-Anhalt-Branding (Dunkelblau + Rot)
+- KPI-Kacheln (Unfälle gesamt, Arztbesuche, Rate, häufigste Abteilung)
+- Alle 4 interaktiven Diagramme als hochauflösende Bilder
+- Datentabellen für Abteilungen, Verletzungsarten und Körperteile
+- Seitenfußzeile mit Seitennummern auf jeder Seite
+- Berücksichtigt die aktuell eingestellten Filter
+
+---
+
+## 💾 Datensicherung
+
+Unter **Einstellungen → Datensicherung** können alle Meldungen und Einstellungen:
+
+- **Exportiert** werden (JSON-Datei, mit einem Klick)
+- **Importiert/Wiederhergestellt** werden (fehlende Einträge werden ergänzt, vorhandene nicht überschrieben)
+
+---
+
 ## 🏗️ Projektstruktur
 
 ```
@@ -60,14 +85,15 @@ verbandbuch/
 │   │   ├── edit/[token]/         # Persönliche Bearbeitungsseite
 │   │   ├── admin/
 │   │   │   ├── page.tsx          # Admin-Dashboard (Meldungen)
-│   │   │   ├── stats/            # Statistiken
+│   │   │   ├── stats/            # Statistiken + PDF-Export
 │   │   │   ├── documents/        # Dokumentenverwaltung
 │   │   │   ├── users/            # Benutzerverwaltung
+│   │   │   ├── settings/         # Einstellungen + Datensicherung
 │   │   │   └── login/            # Admin-Login
 │   │   └── api/
 │   │       ├── reports/          # CRUD für Meldungen
 │   │       ├── documents/        # Upload & Download von Formularen
-│   │       └── admin/            # Auth, Statistiken, Admin-CRUD
+│   │       └── admin/            # Auth, Statistiken, Backup/Restore, Admin-CRUD
 │   └── lib/
 │       ├── db.ts                 # SQLite-Datenbankfunktionen
 │       └── session.ts            # iron-session Konfiguration
@@ -83,14 +109,28 @@ verbandbuch/
 
 | Bereich | Technologie |
 |---|---|
-| Framework | Next.js 14 (App Router) |
+| Framework | Next.js (App Router) |
 | Datenbank | SQLite via `better-sqlite3` |
 | Session | `iron-session` (HTTP-only Cookie) |
 | Passwörter | `bcryptjs` |
 | Diagramme | `chart.js` |
+| PDF-Export | `jspdf` |
 | IDs/Token | `uuid` |
-| Styling | Vanilla CSS (Glassmorphism Dark Theme) |
-| Schrift | Inter (Google Fonts) |
+| Styling | Vanilla CSS (HS-Anhalt Corporate Design) |
+| Schriften | Montserrat & Source Sans 3 (Google Fonts) |
+
+---
+
+## 🎨 Corporate Design
+
+Die App folgt dem Corporate Design der **Hochschule Anhalt**:
+
+- **Primärfarbe:** HS-Dunkelblau `#13017C`
+- **Akzentfarbe:** HS-Rot `#E4001C`
+- **Schriften:** Montserrat (Überschriften) · Source Sans 3 (Fließtext)
+- Navbar mit weißem Hintergrund und roter Unterlinie
+- Karten mit dunkelblauem Top-Border (wird bei Hover rot)
+- Admin-Sidebar in Dunkelblau, aktiver Link in HS-Rot
 
 ---
 
