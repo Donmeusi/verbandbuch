@@ -13,6 +13,7 @@ Entwickelt mit **Next.js**, **SQLite** und einem modernen Corporate Design.
 - ✏️ Meldung bearbeiten oder löschen über den persönlichen Link
 - 🏥 Warnung bei Arztbesuch + automatische Download-Links für Pflichtformulare (BG-Formulare)
 - 🆓 Freitext-Eingabe bei „Sonstiges" (Verletzungsart & Körperteil)
+- 📱 **Vollständig responsiv** – optimiert für Smartphone, Tablet und Desktop
 
 ### Admin-Bereich (`/admin`)
 - 🔐 Sicherer Login mit bcrypt-gehashten Passwörtern und HTTP-only Session-Cookie
@@ -118,6 +119,19 @@ verbandbuch/
 | IDs/Token | `uuid` |
 | Styling | Vanilla CSS (Corporate Design) |
 | Schriften | Montserrat & Source Sans 3 (Google Fonts) |
+
+---
+
+## 📱 Responsive Design
+
+Die App ist vollständig für mobile Endgeräte optimiert:
+
+- **Hamburger-Menü** – auf allen Seiten bei ≤ 768 px (animiertes ☰/✕-Icon)
+- **Mobile Navigation** – Dropdown-Panel mit allen Links und Abmelden-Button
+- **Breakpoints:** `768 px` (Tablet) und `480 px` (Smartphone)
+- Formulare, Karten und Modals passen sich automatisch an schmale Bildschirme an
+- Tabellen sind horizontal scrollbar (kein Layout-Bruch)
+- Seitentitel und Abstände werden auf kleinen Screens reduziert
 
 ---
 
