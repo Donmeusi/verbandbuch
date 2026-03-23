@@ -1,7 +1,7 @@
 # 🩹 Verbandbuch – Digitale Erste-Hilfe-Dokumentation
 
 Eine moderne Web-App zur digitalen Erfassung von Bagatellunfällen gemäß **DGUV Vorschrift 1 §24**.  
-Entwickelt mit **Next.js**, **SQLite** und dem **Corporate Design der Hochschule Anhalt**.
+Entwickelt mit **Next.js**, **SQLite** und einem modernen Corporate Design.
 
 ---
 
@@ -17,7 +17,7 @@ Entwickelt mit **Next.js**, **SQLite** und dem **Corporate Design der Hochschule
 ### Admin-Bereich (`/admin`)
 - 🔐 Sicherer Login mit bcrypt-gehashten Passwörtern und HTTP-only Session-Cookie
 - 📊 Dashboard mit allen Meldungen (Suche, Bearbeiten, Löschen, CSV-Export)
-- 📈 **Statistiken** mit interaktiven Diagrammen, Filtern und **PDF-Export im HS-Anhalt-Design**
+- 📈 **Statistiken** mit interaktiven Diagrammen, Filtern und **PDF-Export**
 - 📂 **Dokumentenverwaltung** – Formulare als PDF/Word/Excel hochladen und verwalten
 - 👥 **Benutzerverwaltung** – Admin-Konten erstellen, umbenennen, Passwort ändern, löschen
 - ⚙️ **Einstellungen** – Hinweistexte anpassen
@@ -56,7 +56,7 @@ Die App läuft anschließend unter **http://localhost:3000**
 
 Der Admin-Bereich bietet unter **Statistiken** einen vollständigen PDF-Export:
 
-- Deckblatt mit HS-Anhalt-Branding (Dunkelblau + Rot)
+- Deckblatt mit Branding (Dunkelblau + Rot)
 - KPI-Kacheln (Unfälle gesamt, Arztbesuche, Rate, häufigste Abteilung)
 - Alle 4 interaktiven Diagramme als hochauflösende Bilder
 - Datentabellen für Abteilungen, Verletzungsarten und Körperteile
@@ -116,21 +116,19 @@ verbandbuch/
 | Diagramme | `chart.js` |
 | PDF-Export | `jspdf` |
 | IDs/Token | `uuid` |
-| Styling | Vanilla CSS (HS-Anhalt Corporate Design) |
+| Styling | Vanilla CSS (Corporate Design) |
 | Schriften | Montserrat & Source Sans 3 (Google Fonts) |
 
 ---
 
-## 🎨 Corporate Design
+## 🎨 Design
 
-Die App folgt dem Corporate Design der **Hochschule Anhalt**:
-
-- **Primärfarbe:** HS-Dunkelblau `#13017C`
-- **Akzentfarbe:** HS-Rot `#E4001C`
+- **Primärfarbe:** Dunkelblau `#13017C`
+- **Akzentfarbe:** Rot `#E4001C`
 - **Schriften:** Montserrat (Überschriften) · Source Sans 3 (Fließtext)
-- Navbar mit weißem Hintergrund und roter Unterlinie
-- Karten mit dunkelblauem Top-Border (wird bei Hover rot)
-- Admin-Sidebar in Dunkelblau, aktiver Link in HS-Rot
+- Weiße Navbar mit roter Unterlinie
+- Karten mit dunkelblauem Top-Border
+- Admin-Sidebar in Dunkelblau, aktiver Link in Rot
 
 ---
 

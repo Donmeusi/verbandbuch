@@ -377,7 +377,7 @@ export default function AdminStatsPage() {
                 pdf.setFont("helvetica", "normal");
                 pdf.setFontSize(7.5);
                 pdf.setTextColor(190, 190, 220);
-                pdf.text("Hochschule Anhalt – Digitales Verbandbuch – Vertraulich", margin, pageH - 4);
+                pdf.text("Digitales Verbandbuch – Vertraulich", margin, pageH - 4);
                 pdf.text(`Seite ${i} / ${pageCount}`, pageW - margin, pageH - 4, { align: "right" });
             }
 
