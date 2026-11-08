@@ -5,8 +5,26 @@ export interface SessionData {
     username?: string;
 }
 
+const MIN_SECRET_LENGTH = 32;
+
+function getSessionPassword(): string {
+    const secret = process.env.SESSION_SECRET;
+
+    // Bewusst kein Rückfallwert: ohne gesetztes Geheimnis muss die Session
+    // fehlschlagen, statt mit einem öffentlich bekannten Wert weiterzulaufen.
+    if (!secret || secret.length < MIN_SECRET_LENGTH) {
+        throw new Error(
+            `SESSION_SECRET fehlt oder ist kürzer als ${MIN_SECRET_LENGTH} Zeichen.`,
+        );
+    }
+
+    return secret;
+}
+
 export const sessionOptions: SessionOptions = {
-    password: "verbandbuch-secret-key-at-least-32-chars-long-2024",
+    get password() {
+        return getSessionPassword();
+    },
     cookieName: "verbandbuch-session",
     cookieOptions: {
         secure: process.env.NODE_ENV === "production",
